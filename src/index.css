@@ -3,13 +3,16 @@ html{
 }
 
 body {
+  display: flex;
+  justify-content: center;
   margin: 0;
-  padding: 1rem;
+  padding-top: 1rem;
   font-family: sans-serif;
   background-color: rgb(14, 26, 0);
 }
 
 .App{
+  width: 584px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
