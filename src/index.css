@@ -18,6 +18,7 @@ body {
   line-height: 0;
   background-color: rgb(128, 0, 0);
   padding: 16px;
+  border-radius: .75rem;
 }
 .borderWrap{
   border: 1px solid rgb(201, 20, 129);
@@ -30,13 +31,15 @@ body {
   border: 1px solid rgb(201, 20, 129);
 }
 .on{
-  background-color: rgb(190, 221, 14);
+  background-color: rgb(234, 248, 106);
 }
 
 .gen{
-  line-height: 1.5rem;
-  width: 584px;
-  background-color: rgb(190, 221, 14);
+  border-radius: .75rem;
+  padding-left: 0.5rem;
+  line-height: 1.5;
+  width: 576px;
+  background-color: rgb(201, 20, 129);
 }
 
 button{
