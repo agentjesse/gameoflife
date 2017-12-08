@@ -42,6 +42,7 @@ body {
 
 button,
 .gen{
+  outline: none;
   margin-top: 1.5rem;
   background-color: rgb(234, 248, 106);
   font-size: 1.5rem;
