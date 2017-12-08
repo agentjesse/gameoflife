@@ -4,13 +4,15 @@ html{
 
 body {
   margin: 0;
-  padding: 0.5rem;
+  padding: 1rem;
   font-family: sans-serif;
   background-color: rgb(14, 26, 0);
 }
 
 .App{
-  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .grid{
@@ -19,6 +21,7 @@ body {
   background-color: rgb(128, 0, 0);
   padding: 16px;
   border-radius: .75rem;
+  box-shadow: 0 0 20px 10px #000000;
 }
 .borderWrap{
   border: 1px solid rgb(201, 20, 129);
@@ -34,23 +37,28 @@ body {
   background-color: rgb(234, 248, 106);
 }
 
+button,
 .gen{
-  border-radius: .75rem;
-  padding-left: 0.5rem;
-  line-height: 1.5;
-  width: 576px;
-  background-color: rgb(201, 20, 129);
-}
-
-button{
-  margin-top: 0.3rem;
+  margin-top: 1.5rem;
   background-color: rgb(234, 248, 106);
   font-size: 1.5rem;
-  border-color: #128c8c;
+  border: 2px solid;
   border-radius: 9px;
   line-height: 1;
-  padding: 0.3rem 0.3rem 0.6rem;
+  padding: 0.3rem 0.3rem 0.5rem;
 }
 button+button{
-  margin-left: 5px;
+  margin-left: 0.75rem;
+}
+.gen{
+  font-family: monospace;
+  margin-right: 0.75rem;
+  background-color: rgb(201, 20, 129);
+  box-shadow: inset 0 0 16px 3px rgba(0, 0, 0, 0.39);
+}
+
+p{
+  text-align: center;
+  margin: 1rem 0;
+  color: rgb(84, 124, 4);
 }

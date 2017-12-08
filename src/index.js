@@ -1,6 +1,5 @@
 /*
 This app uses the neighbour finding algorithm from Richard Hayes tutorial: https://www.youtube.com/watch?v=GB7Oh226mjM&t=100s 
-combined with the structure from the FCC Tutorial: https://www.youtube.com/watch?v=PM0_Er3SvFQ
 */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -21,18 +20,31 @@ class App extends React.Component {
 	}
 
 	play = ()=>{
-		clearInterval(this.intervalId);
+		clearInterval(this.intervalId); //necessary to stop running timer, or multiple will be fired
 		this.intervalId = setInterval(this.nextGen, 80);
 	}
-	
 	pause = ()=>{
 		clearInterval(this.intervalId)
 	}
 
 	clear = ()=>{
-		this.generation = -1;
 		clearInterval(this.intervalId);
+		this.generation = -1;
 		this.setState({logicArr: Array(this.rows).fill().map( (value,index)=> Array(this.cols).fill(false) )});
+	}
+
+	//seed board
+	seed = ()=>{
+		this.generation = 0;
+		//AGAIN! CLONE!!!! cant just copy over or variable references/fucks with same object
+		let copy = arrayClone(this.state.logicArr);
+		for(let i = 0; i<this.rows ; i++){
+			for(let j = 0; j<this.cols ; j++){
+				if( (Math.floor(Math.random()*5)) === 0 )
+					copy[i][j]=true;
+			}
+		}
+		this.setState({logicArr:copy});
 	}
 
 	//set a new modded arr in this.state.logicArr that will advance the board to the next generation.
@@ -84,27 +96,14 @@ class App extends React.Component {
     return this.state.logicArr[row][col];
 	}
 
-	//seed board
-	seed = ()=>{
-		this.generation = -1;
-		//AGAIN! CLONE!!!! cant just copy over or variable references/fucks with same object
-		let copy = arrayClone(this.state.logicArr);
-
-		for(let i = 0; i<this.rows ; i++){
-			for(let j = 0; j<this.cols ; j++){
-				if( (Math.floor(Math.random()*5)) === 0 )
-					copy[i][j]=true;
-			}
-		}
-		this.setState({logicArr:copy});
-	}
-
 	//clickhandler to manually toggle grid squares
 	toggleSquare = (row,col)=>{
+		let genCopy = this.generation;
 		//AGAIN! CLONE!!!! cant just copy over or variable references/fucks with same object
 		let copy = arrayClone(this.state.logicArr);
 		copy[row][col] = !copy[row][col];
 		this.setState({logicArr:copy});
+		this.generation = genCopy-1;
 	}
 
 	render() {
@@ -135,12 +134,19 @@ class App extends React.Component {
 					</div>
 				</div>	
 				
-				<div className='gen'>generation {this.generation}</div>
+				<div className='gen'>generation:<span>{this.generation}</span></div>
+				<br/>
 
 				<button onClick={ this.play }>play</button>
 				<button onClick={ this.pause }>pause</button>
 				<button onClick={ this.clear }>clear</button>
 				<button onClick={ this.seed }>seed</button>
+
+				<br/>
+				<p>
+					This app uses the neighbour finding algorithm from Richard Hayes tutorial: <br/>
+					https://www.youtube.com/watch?v=GB7Oh226mjM&t=100s 
+				</p>
 
 			</div>
 		);
