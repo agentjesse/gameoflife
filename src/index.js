@@ -1,3 +1,7 @@
+/*
+This app uses the neighbour finding algorithm from Richard Hayes tutorial: https://www.youtube.com/watch?v=GB7Oh226mjM&t=100s 
+combined with the structure from the FCC Tutorial: https://www.youtube.com/watch?v=PM0_Er3SvFQ
+*/
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -7,27 +11,121 @@ class App extends React.Component {
 		super();
 		//the following line makes a 2d array containing 3 arrays of 3 arrays in each. after calling Array(3), an empty fill() will actually add elements of type undefined to it. without this, even though the length is set, there is nothing for the following map call to use.
 		// this.testArr = Array(3).fill().map( ()=> Array(3).fill(false) );
-		this.logicArr = Array(10).fill().map( (value,index)=> Array(10).fill(false) )
+		this.rows=25;
+		this.cols=25;
+		this.generation=0;
+		this.intervalId=undefined;
     this.state = {
-			logicArr:this.logicArr
+			logicArr: Array(this.rows).fill().map( (value,index)=> Array(this.cols).fill(false) )
     };
-		console.log(this.state.logicArr);
 	}
 
+	play = ()=>{
+		clearInterval(this.intervalId);
+		this.intervalId = setInterval(this.nextGen, 80);
+	}
+	
+	pause = ()=>{
+		clearInterval(this.intervalId)
+	}
+
+	clear = ()=>{
+		this.generation = -1;
+		clearInterval(this.intervalId);
+		this.setState({logicArr: Array(this.rows).fill().map( (value,index)=> Array(this.cols).fill(false) )});
+	}
+
+	//set a new modded arr in this.state.logicArr that will advance the board to the next generation.
+	nextGen = ()=>{
+		// console.time('checker');
+		//CLONE ARRAY for a new copy or else new variable refrences old!!!!
+		let nextArr = arrayClone(this.state.logicArr); 
+		//define neighbour counter
+		let neighbours = 0;
+		//iterate over each cell and check its neighbours. save the status for the next gen to nextArr
+		for(let i = 0; i<this.rows ; i++){
+			for(let j = 0; j<this.cols ; j++){
+				//reset counter instead of making it
+				neighbours = 0;
+				if( this.checkCell(i-1,j-1) ) neighbours++;
+				if( this.checkCell(i-1,j) ) neighbours++;
+				if( this.checkCell(i-1,j+1) ) neighbours++;
+				if( this.checkCell(i,j-1) ) neighbours++;
+				if( this.checkCell(i,j+1) ) neighbours++;
+				if( this.checkCell(i+1,j-1) ) neighbours++;
+				if( this.checkCell(i+1,j) ) neighbours++;
+				if( this.checkCell(i+1,j+1) ) neighbours++;
+				// console.log(neighbours);//don't leave this in, it slows the shit down out of the code
+
+				//check live cells
+				if( this.state.logicArr[i][j] ){
+					if( neighbours < 2) nextArr[i][j] = false; //die of isolation
+					if( neighbours > 3) nextArr[i][j] = false; //die of overcrowding
+					//if( neighbours === 3 || neighbours === 2) nextArr[i][j] = true //live on to next gen
+				}//check dead cells
+				else{
+					if( neighbours === 3 ) nextArr[i][j] = true;
+				}
+				
+			}
+		}
+		this.setState({logicArr:nextArr});
+		// console.timeEnd('checker');
+	}
+
+	//given coords of cell, return its status: true or false. also handle mirroring of edges before check 
+	checkCell = (row,col)=>{
+		//mirroring
+		if(row === -1) row = this.rows - 1;
+    if(row === this.rows) row = 0;
+    if(col === -1) col = this.cols - 1;
+    if(col === this.cols) col = 0;
+    //retrieve and return status           
+    return this.state.logicArr[row][col];
+	}
+
+	//seed board
+	seed = ()=>{
+		this.generation = -1;
+		//AGAIN! CLONE!!!! cant just copy over or variable references/fucks with same object
+		let copy = arrayClone(this.state.logicArr);
+
+		for(let i = 0; i<this.rows ; i++){
+			for(let j = 0; j<this.cols ; j++){
+				if( (Math.floor(Math.random()*5)) === 0 )
+					copy[i][j]=true;
+			}
+		}
+		this.setState({logicArr:copy});
+	}
+
+	//clickhandler to manually toggle grid squares
+	toggleSquare = (row,col)=>{
+		//AGAIN! CLONE!!!! cant just copy over or variable references/fucks with same object
+		let copy = arrayClone(this.state.logicArr);
+		copy[row][col] = !copy[row][col];
+		this.setState({logicArr:copy});
+	}
 
 	render() {
+		this.generation++;
+		// console.log(this.state.logicArr);
 		//make an array of jsx grid square components
-		// let arrOfGridSquares=[<Square key={0} alive={true}/>];
 		let arrOfGridSquares = [];
-		for(let i = 0; i<10 ; i++){
-			for(let j = 0; j<10 ; j++){
-				console.log(i+''+j);
+		for(let i = 0; i<this.rows ; i++){
+			for(let j = 0; j<this.cols ; j++){
+				// console.log(i+''+j);
 				arrOfGridSquares.push(
-					<Square key={''+i+j} row={i} col={j} alive={this.state.logicArr[i][j]}/>
+					<Square 
+									key={i+'_'+j}
+									row={i}
+									col={j}
+									alive={this.state.logicArr[i][j]}
+									toggleSquare={this.toggleSquare}
+					/>
 				);
 			}
 		}
-
 		return (
 			<div className="App">
 
@@ -36,21 +134,37 @@ class App extends React.Component {
 						{arrOfGridSquares}
 					</div>
 				</div>	
+				
+				<div className='gen'>generation {this.generation}</div>
+
+				<button onClick={ this.play }>play</button>
+				<button onClick={ this.pause }>pause</button>
+				<button onClick={ this.clear }>clear</button>
+				<button onClick={ this.seed }>seed</button>
 
 			</div>
 		);
 	}
+
+	componentDidMount = ()=>{
+		this.seed();
+		this.play();
+	}
+
 }
 
-//passed in props: row col key alive
+//passed in props: row col key alive toggleSquare()
 const Square = (props)=> {
-	return (
-		<div 
-			className={ props.alive ? 'gridSquare on' : 'gridSquare'}
-			onClick={()=>alert(`I am in row ${props.row} column ${props.col}`)}
-		></div>
-	);
+		return (
+			<div 
+					className={ props.alive ? 'gridSquare on' : 'gridSquare'}
+					onClick={ ()=> {props.toggleSquare(props.row,props.col)} }
+			></div>
+		);
 }
+
+//array deep cloner, if you just assign an array to a new variable, both variables reference the same array, so you need to make a new clean copy.
+const arrayClone = (arr)=> JSON.parse(JSON.stringify(arr));
 
 //------------------------------------------------------------------------------------------------------------------
 //render to react's virtualdom

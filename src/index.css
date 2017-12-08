@@ -6,29 +6,38 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  background-color: #333;
+  background-color: rgb(21, 39, 0);
 }
 
 .App{
-
+  
 }
 
 .grid{
-  width: 342px;
+  width: 552px;
   line-height: 0;
-  background-color: rgb(118, 115, 247);
+  background-color: rgb(128, 0, 0);
   padding: 16px;
 }
 .borderWrap{
-  border: 1px solid greenyellow;
+  border: 1px solid rgb(201, 20, 129);
 }
 .gridSquare{
   display: inline-block;
-  background-color: rgb(41, 71, 2);
-  width: 32px;
-  height: 32px;
-  border: 1px solid greenyellow;
+  background-color: rgb(54, 0, 42);
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgb(201, 20, 129);
 }
 .on{
-  background-color: greenyellow;
+  background-color: rgb(190, 221, 14);
+}
+
+.gen{
+  width: 584px;
+  background-color: rgb(190, 221, 14);
+}
+
+button{
+  font-size: 1.5rem;
 }
