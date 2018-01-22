@@ -5,6 +5,7 @@ html{
 body {
   display: flex;
   justify-content: center;
+  min-width: 584px;
   margin: 0;
   padding-top: 1rem;
   font-family: sans-serif;
